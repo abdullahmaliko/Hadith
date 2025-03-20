@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hadith Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #004aad;
+        }
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        input {
+            width: 60%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #004aad;
+            border-radius: 25px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+        button {
+            padding: 12px 20px;
+            margin-left: 10px;
+            background-color: #004aad;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            background-color: #003080;
+        }
+        #results {
+            margin-top: 20px;
+            text-align: left;
+            max-width: 700px;
+            margin: auto;
+        }
+        .hadith-card {
+            background: linear-gradient(to right, #004aad, #0073e6);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.2);
+        }
+        .hadith-arabic {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: right;
+            direction: rtl;
+            margin-bottom: 10px;
+        }
+        .hadith-urdu {
+            background-color: #f0f8ff;
+            color: #004aad;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 18px;
+            text-align: right;
+            direction: rtl;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🔍 Hadith Search</h1>
+
+    <div class="search-container">
+        <input type="text" id="searchQuery" placeholder="Enter keyword (e.g., prayer, namaz)">
+        <button onclick="searchHadith()">Search</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+        async function searchHadith() {
+            let query = document.getElementById("searchQuery").value;
+            let apiKey = "$2y$10$OG1ZFBsOgFO0Zs7eT1azgOwIQ38rhiH4L3ulkHYMx7jaxC7gCdym";
+            let url = `https://api.hadithapi.com/v1/hadiths?query=${query}&apiKey=${apiKey}`;
+
+            document.getElementById("results").innerHTML = "<p>Loading...</p>";
+
+            try {
+                let response = await fetch(url);
+                let data = await response.json();
+                let resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = ""; // Clear previous results
+
+                if (data.hadiths && data.hadiths.length > 0) {
+                    data.hadiths.forEach(hadith => {
+                        resultsDiv.innerHTML += `
+                            <div class="hadith-card">
+                                <p class="hadith-arabic">${hadith.arabic}</p>
+                                <p class="hadith-urdu">${hadith.urdu}</p>
+                            </div>
+                        `;
+                    });
+                } else {
+                    resultsDiv.innerHTML = "<p>No Hadith found.</p>";
+                }
+            } catch (error) {
+                document.getElementById("results").innerHTML = "<p>Error fetching data.</p>";
+                console.error("Error:", error);
+            }
+        }
+    </script>
+
+</body>
+</html>
